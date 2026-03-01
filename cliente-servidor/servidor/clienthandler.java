@@ -17,7 +17,7 @@ public class clienthandler extends Thread {
                         socket.getOutputStream(), true);) {
 
             out.println(
-                    "conectado ao servidor! Envie dois inteiros e uma operação (Adicao, Subtracao, Multiplicacao, Divisao) separados por espaço ou 'sair' para encerrar.");
+                    "conectado ao servidor! Envie dois números (float) e uma operação (Adicao, Subtracao, Multiplicacao, Divisao) separados por espaço ou 'sair' para encerrar.");
 
             String mensagem;
 
@@ -33,10 +33,11 @@ public class clienthandler extends Thread {
                 String[] parts = mensagem.trim().split("\\s+");
                 if (parts.length == 3) {
                     try {
-                        int a = Integer.parseInt(parts[0]);
-                        int b = Integer.parseInt(parts[1]);
+                        // admite vírgula como separador decimal
+                        float a = Float.parseFloat(parts[0].replace(',', '.'));
+                        float b = Float.parseFloat(parts[1].replace(',', '.'));
                         String op = parts[2].toLowerCase();
-                        long resultado;
+                        float resultado;
                         switch (op) {
                             case "adicao":
                             case "adição":
@@ -51,28 +52,27 @@ public class clienthandler extends Thread {
                             case "multiplicacao":
                             case "multiplicação":
                             case "mul":
-                                resultado = (long) a * b;
+                                resultado = a * b;
                                 break;
                             case "divisao":
                             case "divisãp":
                             case "div":
-                                if (b == 0) {
+                                if (b == 0f) {
                                     out.println("Erro: divisão por zero");
                                     continue;
                                 }
-                                // resultado inteiro
                                 resultado = a / b;
                                 break;
                             default:
                                 out.println("Operação desconhecida: " + parts[2]);
                                 continue;
                         }
-                        out.println("Resultado: " + resultado);
+                        out.println("Resultado: " + String.format("%.2f", resultado));
                     } catch (NumberFormatException ex) {
-                        out.println("Erro: ambos operandos devem ser inteiros.");
+                        out.println("Erro: ambos operandos devem ser números.");
                     }
                 } else {
-                    out.println("Formato inválido. Use: <int1> <int2> <operacao>");
+                    out.println("Formato inválido. Use: <num1> <num2> <operacao>");
                 }
             }
 
